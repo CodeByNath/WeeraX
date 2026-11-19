@@ -1,10 +1,6 @@
-:root { color-scheme: dark; background: #080808; }
-
 * { box-sizing: border-box; }
 
 html, body { width: 100%; min-height: 100%; margin: 0; overflow: hidden; }
-
-body { background: #080808; }
 
 .viewport {
   width: 100vw;
@@ -12,9 +8,6 @@ body { background: #080808; }
   display: grid;
   place-items: center;
   overflow: hidden;
-  background:
-    radial-gradient(circle at 50% 50%, rgba(198, 255, 63, .08), transparent 34%),
-    #080808;
 }
 
 .image-square {
@@ -24,7 +17,6 @@ body { background: #080808; }
   max-height: calc(100svh - 2.5rem);
   margin: 0;
   overflow: hidden;
-  background: #c6ff3f;
 }
 
 .image-square img {
