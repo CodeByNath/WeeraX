@@ -5,14 +5,20 @@ import { createServer } from 'node:http';
 const files = new Map([
   ['/', ['index.html', 'text/html']],
   ['/index.html', ['index.html', 'text/html']],
-  ['/style.css', ['style.css', 'text/css']],
-  ['/main.js', ['main.js', 'text/javascript']],
-  ['/mechanism.js', ['mechanism.js', 'text/javascript']],
-  ['/surface.js', ['surface.js', 'text/javascript']],
-  ['/node_modules/three/build/three.module.js', ['node_modules/three/build/three.module.js', 'text/javascript']],
-  ['/node_modules/three/build/three.core.js', ['node_modules/three/build/three.core.js', 'text/javascript']],
+  ...[
+    ['style.css', 'text/css'],
+    ['main.js', 'text/javascript'],
+    ['mechanism.js', 'text/javascript'],
+    ['surface.js', 'text/javascript'],
+    ['vendor/three.module.min.js', 'text/javascript'],
+    ['vendor/three.core.min.js', 'text/javascript'],
+  ].map(([name, type]) => {
+    const path = `prototypes/antikythera/${name}`;
+    return [`/${path}`, [path, type]];
+  }),
 ]);
 
+const root = new URL('../../', import.meta.url);
 const host = '127.0.0.1';
 const port = Number(process.env.PORT ?? 4173);
 
@@ -25,10 +31,10 @@ createServer(async (request, response) => {
   }
 
   const [name, type] = file;
-  const source = new URL(name, import.meta.url);
+  const source = new URL(name, root);
   const details = await stat(source).catch(() => null);
   if (!details?.isFile()) {
-    response.writeHead(404).end('File unavailable. Run npm ci before starting the preview.');
+    response.writeHead(404).end('File unavailable.');
     return;
   }
 

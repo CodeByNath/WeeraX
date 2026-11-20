@@ -1,21 +1,22 @@
 # WeeraX · The Antikythera
 
-Standalone Three.js homepage prototype. The original WeeraX entry point sits outside this directory.
+The Three.js homepage uses the repository’s root `index.html` and serves its scene from this directory.
 
 ## Run locally
 
 From this directory:
 
 ```sh
-npm ci
 npm run dev
 ```
 
 Open [the local preview](http://127.0.0.1:4173/). A browser with WebGL 2 is required. Set `PORT` to use a different local port.
 
-## Build for GitHub Pages
+## Static hosting
 
-Run `npm ci` and `npm run build` from this directory. The `dist/` folder contains the static site and the pinned Three.js modules. Publish its contents at the root of a dedicated Pages repository. All URLs are relative so the site works under a GitHub Pages project path.
+GitHub Pages serves the root `index.html` directly. The relative URLs work under the `/WeeraX/` project path. Three.js is checked in under `vendor/` with its MIT license so the deployment needs no install step. When updating Three.js, update the lockfile and copy both minified modules from `node_modules/three/build/` and the license from `node_modules/three/`.
+
+Run `npm run build` from this directory to export a self-contained copy to `dist/` for other static hosting.
 
 ## Controls
 
