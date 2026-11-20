@@ -1,9 +1,8 @@
 # WeeraX
 
-Static GitHub Pages portfolio shell.
+The WeeraX homepage is an interactive Three.js study in bronze and starlight.
 
 ## Structure
 
-- `index.html` — page markup
-- `assets/styles/` — stylesheets
-- `assets/images/` — visual assets
+- `index.html` — GitHub Pages entry point
+- [`prototypes/antikythera/`](prototypes/antikythera/) — scene, styles, and local preview instructions
