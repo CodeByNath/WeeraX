@@ -1,6 +1,6 @@
 # WeeraX
 
-The WeeraX homepage is an interactive Three.js study in bronze and starlight.
+The WeeraX homepage is an interactive Three.js study in silver, matte black and starlight.
 
 ## Structure
 

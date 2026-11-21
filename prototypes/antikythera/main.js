@@ -4,7 +4,7 @@ const status = document.querySelector('#scene-status');
 
 async function run() {
   const [THREE, { buildMechanism }, { buildEnvironment, buildMaterials, buildStar }] = await Promise.all([
-    import('three'), import('./mechanism.js'), import('./surface.js'),
+    import('three'), import('./mechanism.js?v=3'), import('./surface.js?v=3'),
   ]);
   const renderer = new THREE.WebGLRenderer({
     canvas, alpha: true, antialias: true, powerPreference: 'low-power',
@@ -28,10 +28,10 @@ async function run() {
     scene.add(light);
   }
 
-  directional(0xffe4c6, 2.8, -4, 6, 4);
-  directional(0xbbc9ed, 2.1, 5, 2, -1.5);
-  directional(0xe5b38c, 1.2, 1, -4, 3);
-  scene.add(new THREE.HemisphereLight(0xfce4ca, 0x281c1a, .58));
+  directional(0xffffff, 3.2, -4, 6, 4);
+  directional(0xf0f0f0, 2.3, 5, 2, -1.5);
+  directional(0xe5e5e5, 1.05, 1, -4, 3);
+  scene.add(new THREE.HemisphereLight(0xf0f0f0, 0x222222, .56));
 
   const updateGears = buildMechanism(root, buildMaterials());
   const updateStar = buildStar(root);

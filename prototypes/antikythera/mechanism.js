@@ -113,7 +113,7 @@ function ticks(batch, radius, z, count, material, size = 1) {
 }
 
 function makeGear(gear, materials) {
-  const { teeth, radius: r, central, x, y, phase } = gear;
+  const { teeth, radius: r, central, silver, x, y, phase } = gear;
   const wheel = new THREE.Group();
   wheel.position.set(x, y, 0);
   wheel.rotation.z = phase;
@@ -124,15 +124,16 @@ function makeGear(gear, materials) {
   const front = thick / 2;
   const detail = central ? 112 : Math.max(32, Math.ceil(teeth * 1.3));
   const bevel = .016;
+  const body = silver ? materials.silver : materials.matte;
 
   batch.add(annulus([
     [r - bevel, -front, true], [r, -front + bevel, true], [r, front - bevel, true],
     [r - bevel, front, true], [inner + .018, front], [inner, front - .018],
     [inner, -front + .018], [inner + .018, -front],
-  ], 0, teeth), materials.bronze);
-  batch.add(rim(r - .058, inner + .026, .039, front + .010, .010, detail), materials.edge);
+  ], 0, teeth), body);
+  batch.add(rim(r - .058, inner + .026, .039, front + .010, .010, detail), body);
   batch.add(rim(inner + .037, inner + .017, .024, front + .031, .005, detail), materials.casting);
-  batch.add(rim(r - .087, r - .107, .026, front + .036, .005, detail), materials.brass);
+  batch.add(rim(r - .087, r - .107, .026, front + .036, .005, detail), silver ? materials.polished : materials.steel);
 
   const hub = central ? .64 : Math.max(.153, r * .305);
   const bore = central ? .357 : hub * .47;
@@ -145,21 +146,21 @@ function makeGear(gear, materials) {
   ], thick * .63, .019);
   for (let i = 0; i < spokes; i++) {
     const angle = turn * i / spokes;
-    batch.add(spoke, central ? materials.bronze : materials.casting, 0, 0, -.029, angle);
+    batch.add(spoke, silver ? materials.silver : materials.casting, 0, 0, -.029, angle);
     if (central) {
       const fillet = extrusion([
         [hub + .023, -.019], [inner - .03, -.084],
         [inner - .03, -.038], [hub + .023, .041],
       ], .013, .007);
-      batch.add(fillet, materials.edge, 0, 0, .050, angle);
+      batch.add(fillet, materials.steel, 0, 0, .050, angle);
     }
   }
 
-  batch.add(rim(hub, bore, thick + .115, .024, .024, detail), materials.bronze);
-  batch.add(rim(hub * .92, hub * .78, .041, front + .100, .010, detail), materials.edge);
+  batch.add(rim(hub, bore, thick + .115, .024, .024, detail), body);
+  batch.add(rim(hub * .92, hub * .78, .041, front + .100, .010, detail), materials.steel);
   batch.add(rim(hub * .77, bore + .012, .028, front + .086, .007, detail), materials.casting);
   if (central) {
-    batch.add(rim(bore + .035, bore - .016, .041, front + .093, .009, 72), materials.brass);
+    batch.add(rim(bore + .035, bore - .016, .041, front + .093, .009, 72), materials.polished);
     ticks(batch, r - .174, front + .032, 100, materials.ink);
     ticks(batch, hub * .855, front + .122, 40, materials.ink, .49);
   }
@@ -170,7 +171,7 @@ function makeGear(gear, materials) {
     const angle = i * turn / spokes;
     const distance = central ? r - .245 : hub * .85;
     const z = central ? front + .05 : front + .126;
-    batch.add(rivet, materials.brass, Math.cos(angle) * distance, Math.sin(angle) * distance, z);
+    batch.add(rivet, materials.polished, Math.cos(angle) * distance, Math.sin(angle) * distance, z);
   }
   batch.finish();
   return wheel;
@@ -179,11 +180,11 @@ function makeGear(gear, materials) {
 function buildChassis(root, gears, materials) {
   const frame = assembly(root);
   frame.add(rim(2.34, 2.216, .19, -.54, .035, 150), materials.casting);
-  frame.add(rim(2.34, 2.259, .056, -.436, .014, 150), materials.edge);
+  frame.add(rim(2.34, 2.259, .056, -.436, .014, 150), materials.steel);
   frame.add(rim(2.22, 2.173, .061, -.472, .011, 128), materials.recess);
-  frame.add(rim(1.29, 1.218, .095, -.59, .023, 96), materials.bronze);
+  frame.add(rim(1.29, 1.218, .095, -.59, .023, 96), materials.matte);
   frame.add(rim(.763, .411, .18, -.56, .032, 96), materials.casting);
-  frame.add(rim(.574, .439, .073, -.443, .022, 96), materials.brass);
+  frame.add(rim(.574, .439, .073, -.443, .022, 96), materials.polished);
   frame.add(cylinder(.452, .056, 64), materials.recess, 0, 0, -.58);
   ticks(frame, 2.291, -.405, 120, materials.ink, .58);
 
@@ -205,15 +206,15 @@ function buildChassis(root, gears, materials) {
     frame.add(arm, materials.casting, parent.x, parent.y, -.547, angle);
 
     frame.add(cylinder(Math.max(.166, radius * .325), .19, 36), materials.casting, x, y, -.446);
-    frame.add(rim(Math.max(.164, radius * .321), .105, .064, -.335, .013, 48), materials.edge, x, y);
+    frame.add(rim(Math.max(.164, radius * .321), .105, .064, -.335, .013, 48), materials.steel, x, y);
     frame.add(cylinder(.103, .57, 24), materials.steel, x, y, -.087);
     frame.add(rim(.119, .07, .046, .191, .01, 24), materials.steel, x, y);
-    frame.add(axleScrew, materials.brass, x, y, .220);
+    frame.add(axleScrew, materials.polished, x, y, .220);
     frame.add(slot, materials.ink, x, y, .243, phase * 2 + radius);
     if (parent.central) {
       const tx = Math.cos(angle) * 2.294;
       const ty = Math.sin(angle) * 2.294;
-      frame.add(mountingBolt, materials.bronze, tx, ty, -.39, angle);
+      frame.add(mountingBolt, materials.matte, tx, ty, -.39, angle);
       frame.add(slot, materials.ink, tx, ty, -.345, angle);
     }
   }
@@ -224,7 +225,7 @@ export function buildMechanism(root, materials) {
   const first = { central: true, teeth: 70, radius: 70 * moduleSize / 2, x: 0, y: 0, phase: 0, ratio: 1 };
   const gears = [first];
 
-  function meshWith(parent, teeth, degrees) {
+  function meshWith(parent, teeth, degrees, silver = false) {
     const direction = THREE.MathUtils.degToRad(degrees);
     const radius = teeth * moduleSize / 2;
     const distance = parent.radius + radius;
@@ -233,7 +234,7 @@ export function buildMechanism(root, materials) {
     const parentPhase = (direction - parent.phase) * parent.teeth / turn;
     const phase = THREE.MathUtils.euclideanModulo(direction + Math.PI - (.5 - parentPhase) * period, period);
     const gear = {
-      parent, teeth, radius, phase, ratio: -parent.ratio * parent.teeth / teeth,
+      parent, teeth, radius, phase, silver, ratio: -parent.ratio * parent.teeth / teeth,
       x: parent.x + Math.cos(direction) * distance,
       y: parent.y + Math.sin(direction) * distance,
     };
@@ -241,13 +242,13 @@ export function buildMechanism(root, materials) {
     return gear;
   }
 
-  const left = meshWith(first, 34, 157);
+  const left = meshWith(first, 34, 157, true);
   meshWith(left, 22, 216);
   const top = meshWith(first, 24, 94);
-  meshWith(top, 18, 49);
+  meshWith(top, 18, 49, true);
   const right = meshWith(first, 42, 20);
-  meshWith(right, 20, -19);
-  const lowerRight = meshWith(first, 28, -52);
+  meshWith(right, 20, -19, true);
+  const lowerRight = meshWith(first, 28, -52, true);
   meshWith(lowerRight, 16, -18);
   const lowerLeft = meshWith(first, 30, -123);
   meshWith(lowerLeft, 16, -167);
