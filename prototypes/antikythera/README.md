@@ -20,7 +20,7 @@ Run `npm run build` from this directory to export a self-contained copy to `dist
 
 ## Controls
 
-Scroll down to move the camera toward the star and up to pull back. On touchscreens, pinch the scene or use the zoom slider. With the slider focused, the arrow keys adjust zoom and Home or End jumps to an endpoint. Use the motion button to inspect the train at rest. The system reduced-motion preference starts the scene paused.
+Scroll down to move the camera toward the star and up to pull back. On touchscreens, pinch the scene. Press Tab to focus the scene, then use the up and down arrow keys to adjust zoom, Home or End to jump to an endpoint, or Space to pause or resume the mechanism. The system reduced-motion preference starts the scene paused.
 
 The eleven wheels share a tooth module. Each driven wheel uses its parent's pitch radius, tooth count and tooth phase to set its centre, angle and speed. The tooth shape is a simplified profile for real-time rendering.
 

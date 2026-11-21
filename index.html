@@ -14,31 +14,11 @@
 </head>
 <body>
   <main class="stage">
-    <canvas id="mechanism" role="img" aria-label="A rotating bronze Antikythera-inspired mechanism with a burning star at its centre"></canvas>
-    <header class="masthead">
-      <div class="wordmark">Weera<span>X</span></div>
-      <button id="motion" class="motion" type="button" aria-pressed="true" disabled>
-        <span class="motion-icon" aria-hidden="true"></span>
-        <span id="motion-label">Pause motion</span>
-      </button>
-    </header>
-
+    <canvas id="mechanism" role="img" tabindex="0"
+      aria-label="A rotating bronze Antikythera-inspired mechanism with a burning star at its centre"
+      aria-description="Press Space to pause or resume. Use the up and down arrow keys to zoom."
+      aria-keyshortcuts="Space ArrowUp ArrowDown Home End"></canvas>
     <p id="scene-status" class="scene-status" role="status">Loading mechanism…</p>
-
-    <footer class="instrument">
-      <div class="caption">
-        <h1>The Antikythera</h1>
-        <p>A study in bronze and starlight</p>
-      </div>
-      <div class="zoom">
-        <div class="zoom-label">
-          <label for="zoom">Camera zoom</label>
-          <output for="zoom" id="zoom-value">1.00×</output>
-        </div>
-        <input id="zoom" type="range" min="0" max="100" value="0" disabled>
-        <p>Scroll, pinch or use the slider</p>
-      </div>
-    </footer>
     <noscript><p class="scene-status">Enable JavaScript to view the mechanism.</p></noscript>
   </main>
 </body>
