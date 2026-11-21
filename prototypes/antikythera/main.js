@@ -1,10 +1,6 @@
 const canvas = document.querySelector('#mechanism');
 const stage = document.querySelector('.stage');
 const status = document.querySelector('#scene-status');
-const motion = document.querySelector('#motion');
-const motionLabel = document.querySelector('#motion-label');
-const zoom = document.querySelector('#zoom');
-const zoomValue = document.querySelector('#zoom-value');
 
 async function run() {
   const [THREE, { buildMechanism }, { buildEnvironment, buildMaterials, buildStar }] = await Promise.all([
@@ -114,31 +110,34 @@ async function run() {
   function setPlaying(value) {
     playing = value;
     if (!value) targetX = targetY = 0;
-    motion.setAttribute('aria-pressed', String(value));
-    motionLabel.textContent = value ? 'Pause motion' : 'Play motion';
     requestFrame();
   }
 
   function setZoom(value) {
     zoomTarget = THREE.MathUtils.clamp(value, 0, 1);
-    zoom.value = Math.round(zoomTarget * 100);
-    const label = `${(1 + zoomTarget * 1.3).toFixed(2)}×`;
-    zoomValue.textContent = label;
-    zoom.setAttribute('aria-valuetext', label);
     requestFrame();
   }
 
   new ResizeObserver(resize).observe(stage);
   resize();
-  setPlaying(playing);
-  setZoom(0);
-  motion.disabled = false;
-  zoom.disabled = false;
   status.hidden = true;
 
-  motion.addEventListener('click', () => setPlaying(!playing));
   preference.addEventListener('change', ({ matches }) => setPlaying(!matches));
-  zoom.addEventListener('input', () => setZoom(zoom.valueAsNumber / 100));
+
+  canvas.addEventListener('keydown', event => {
+    if (event.ctrlKey || event.metaKey || event.altKey) return;
+    switch (event.key) {
+      case ' ':
+        if (!event.repeat) setPlaying(!playing);
+        break;
+      case 'ArrowUp': setZoom(zoomTarget + .05); break;
+      case 'ArrowDown': setZoom(zoomTarget - .05); break;
+      case 'Home': setZoom(0); break;
+      case 'End': setZoom(1); break;
+      default: return;
+    }
+    event.preventDefault();
+  });
 
   stage.addEventListener('wheel', event => {
     if (event.ctrlKey || event.metaKey) return;
