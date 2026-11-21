@@ -1,6 +1,6 @@
 :root {
   color-scheme: dark;
-  background: #0b0908;
+  background: #0a0a0a;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 body { margin: 0; overscroll-behavior: none; }
@@ -11,7 +11,7 @@ body { margin: 0; overscroll-behavior: none; }
   height: 100vh;
   height: 100svh;
   overflow: hidden;
-  background: radial-gradient(ellipse at 50% 46%, #24160f 0%, #150f0c 39%, #0b0908 76%);
+  background: radial-gradient(ellipse at 50% 46%, #1b1b1b 0%, #111111 39%, #0a0a0a 76%);
 }
 #mechanism {
   position: absolute;
@@ -21,11 +21,11 @@ body { margin: 0; overscroll-behavior: none; }
   height: 100%;
   touch-action: none;
 }
-#mechanism:focus-visible { outline: 2px solid #eda969; outline-offset: -2px; }
+#mechanism:focus-visible { outline: 2px solid #c0c0c0; outline-offset: -2px; }
 .scene-status {
   position: absolute;
   top: 46%;
   inset-inline: 1.5rem;
   text-align: center;
-  color: #e8bd94;
+  color: #dedede;
 }

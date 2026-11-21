@@ -15,7 +15,7 @@ function canvas(width, height = width) {
   return surface.getContext('2d');
 }
 
-function bronzeTextures() {
+function metalTextures() {
   const size = 512;
   const colour = canvas(size);
   const relief = canvas(size);
@@ -48,13 +48,10 @@ function bronzeTextures() {
       const index = (y * size + x) * 4;
       const mottling = field(fields[0], x, y) * .45 + field(fields[1], x, y) * .3
         + field(fields[2], x, y) * .17 + field(fields[3], x, y) * .08;
-      const fleck = (random() - .5) * 29;
-      const oxide = THREE.MathUtils.smoothstep(mottling, .43, .78);
-      pixels.data[index] = 209 - 98 * oxide + fleck;
-      pixels.data[index + 1] = 154 - 68 * oxide + fleck;
-      pixels.data[index + 2] = 104 - 29 * oxide + fleck;
-      pixels.data[index + 3] = 255;
-      const height = 146 - oxide * 55 + fleck * .73 - (random() > .945 ? 44 : 0);
+      const fleck = (random() - .5) * 14;
+      const tone = 231 - 25 * mottling + fleck;
+      pixels.data.set([tone, tone, tone, 255], index);
+      const height = 150 - mottling * 22 + fleck - (random() > .96 ? 23 : 0);
       pits.data.set([height, height, height, 255], index);
     }
   }
@@ -66,7 +63,7 @@ function bronzeTextures() {
     const y = random() * size;
     const length = 3 + random() * 38;
     for (const context of [colour, relief]) {
-      context.strokeStyle = i % 3 ? 'rgba(20,14,10,.15)' : 'rgba(255,225,175,.21)';
+      context.strokeStyle = i % 3 ? 'rgba(16,16,16,.09)' : 'rgba(240,240,240,.13)';
       context.beginPath();
       context.moveTo(x, y);
       context.lineTo(x + length, y + length * .16);
@@ -85,31 +82,31 @@ function bronzeTextures() {
 }
 
 export function buildMaterials() {
-  const texture = bronzeTextures();
+  const texture = metalTextures();
   const metal = (color, metalness, roughness, bumpScale) =>
     new THREE.MeshStandardMaterial({ color, metalness, roughness, bumpScale, ...texture });
 
   return {
-    bronze: metal(0xe3ae79, .79, .43, .035),
-    edge: metal(0xffd2a1, .84, .33, .022),
-    brass: metal(0xffcd8d, .83, .29, .019),
-    casting: metal(0x825639, .68, .58, .067),
-    recess: metal(0x473a30, .60, .62, .042),
-    steel: metal(0x9d9487, .87, .33, .032),
-    ink: new THREE.MeshStandardMaterial({ color: 0x311c10, metalness: .25, roughness: .83 }),
+    matte: metal(0x282828, .13, .73, .016),
+    silver: metal(0xc7c7c7, .91, .33, .013),
+    polished: metal(0xe4e4e4, .94, .25, .010),
+    casting: metal(0x1c1c1c, .18, .71, .023),
+    recess: metal(0x101010, .10, .83, .016),
+    steel: metal(0x777777, .83, .45, .015),
+    ink: new THREE.MeshStandardMaterial({ color: 0x101010, metalness: .07, roughness: .86 }),
   };
 }
 
 export function buildEnvironment(renderer) {
   const light = canvas(512, 256);
-  light.fillStyle = '#11141b';
+  light.fillStyle = '#151515';
   light.fillRect(0, 0, 512, 256);
 
   for (const [x, y, width, height, hue] of [
-    [108, 64, 110, 55, '255,226,196'],
-    [337, 78, 73, 92, '182,207,255'],
-    [457, 143, 59, 50, '255,193,129'],
-    [211, 203, 85, 30, '128,100,80'],
+    [108, 64, 110, 55, '255,255,255'],
+    [337, 78, 73, 92, '205,205,205'],
+    [457, 143, 59, 50, '237,237,237'],
+    [211, 203, 85, 30, '111,111,111'],
   ]) {
     light.save();
     light.translate(x, y);
@@ -173,9 +170,9 @@ export function buildStar(root) {
         void main() {
           vec3 p = surface * 5.0 + vec3(0.0, -time*.62, time*.19);
           float n = noise(p) * .60 + noise(p * 2.25 + 4.0) * .28 + noise(p * 5.4) * .12;
-          vec3 ember = mix(vec3(.94,.105,.009), vec3(1.0,.53,.10), smoothstep(.10,.60,n));
-          vec3 heat = mix(ember, vec3(1.0,.98,.81), smoothstep(.37,.78,n + clamp(facing,0.0,1.0)*.18));
-          gl_FragColor = vec4(heat, 1.0);
+          float ember = mix(.31, .86, smoothstep(.10,.60,n));
+          float heat = mix(ember, 1.0, smoothstep(.37,.78,n + clamp(facing,0.0,1.0)*.18));
+          gl_FragColor = vec4(vec3(heat), 1.0);
         }`,
     }),
   );
@@ -206,7 +203,7 @@ export function buildStar(root) {
           float wisps = pow(.5 + .5*sin(a*9.0 + sin(a*5.0-time)*1.2 - r*22.0 + time*1.9), 3.0);
           float flare = exp(-17.0*abs(halo.y + halo.x*.18)) * exp(-8.0*abs(halo.x)) * .13;
           float alpha = (corona*(1.0 + .46*wisps) + flare) * (1.0-smoothstep(.36,.88,r));
-          gl_FragColor = vec4(1.0, .37 + .24*exp(-5.0*r), .10, alpha);
+          gl_FragColor = vec4(vec3(1.0), alpha);
         }`,
     }),
   );
@@ -214,13 +211,13 @@ export function buildStar(root) {
   glow.renderOrder = 2;
   root.add(glow);
 
-  const lamp = new THREE.PointLight(0xffa05b, 14, 6, 2);
+  const lamp = new THREE.PointLight(0xffffff, 10, 6, 2);
   lamp.position.z = .59;
   root.add(lamp);
 
   return seconds => {
     time.value = seconds;
     core.rotation.y = seconds * .43;
-    lamp.intensity = 14 + Math.sin(seconds * 7.1) * 1.3 + Math.sin(seconds * 13.9) * .6;
+    lamp.intensity = 10 + Math.sin(seconds * 7.1) * 1.3 + Math.sin(seconds * 13.9) * .6;
   };
 }
